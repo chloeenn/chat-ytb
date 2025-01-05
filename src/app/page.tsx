@@ -26,8 +26,6 @@ export default function Home() {
           </p>
           <UrlUpload/>
         </div>
-
-
       </div>
     </div>
   );
