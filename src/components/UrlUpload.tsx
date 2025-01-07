@@ -17,7 +17,6 @@ const UrlUpload = () => {
         try{
          // Send URL as a query parameter
          const response = await axios.get(`/api/fetch-transcript?url=${encodeURIComponent(url)}`);
-        //  toast.success("Transcript fetched successfully!");
          const transcript = JSON.stringify(response.data);
          console.log(response.data); // The transcript
          const ytbID = url.split("v=")[1] || url.split("/").pop();
