@@ -15,10 +15,7 @@ export async function uploadToS3(transcript: string, ytb_key: string) {
             Body: transcript,
             ContentType: "text/plain",
         }
-        toast.loading(`Uploading to S3 ${ytb_key}`);
-        console.log('S3 Bucket Name:', process.env.NEXT_PUBLIC_S3_BUCKET_NAME);
-        console.log('AWS Region:', process.env.NEXT_PUBLIC_S3_AWS_REGION);
-
+    
         s3.putObject(
             params,
             (err: any, data: PutObjectCommandOutput | undefined) => {
@@ -37,3 +34,8 @@ export async function uploadToS3(transcript: string, ytb_key: string) {
 function resolve(arg0: { ytb_key: string; }): void {
     throw new Error("Function not implemented.");
 }
+
+export function getS3Url(file_key: string) {
+    const url = `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_S3_AWS_REGION}.amazonaws.com/${file_key}`;
+    return url;
+  }
