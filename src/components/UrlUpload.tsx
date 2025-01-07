@@ -38,7 +38,7 @@ const UrlUpload = () => {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="Paste YouTube URL..."
-                className="w-11/12 outline-none text-center items-inline"
+                className="w-11/12 outline-none text-center items-inline truncate ml-4 mr-4"
             />
             <Send className="float-right mr-3.5 cursor-pointer hover:text-slate-600" onClick={() => handleSubmit()} />
         </div>
