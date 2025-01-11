@@ -3,8 +3,8 @@ import React from 'react';
 import { Send } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { useMutation } from "@tanstack/react-query";
-import { uploadToS3 } from '@/lib/db/s3';
+import { uploadToS3 } from '@/lib/s3';
+import { redirect } from 'next/navigation';
 const UrlUpload = () => {
     const [url, setUrl] = React.useState("");
     const handleSubmit = async () => {
@@ -13,22 +13,22 @@ const UrlUpload = () => {
             toast.error("Youtube URL is not valid");
             return;
         }
-   
-        try{
-         // Send URL as a query parameter
-         const response = await axios.get(`/api/fetch-transcript?url=${encodeURIComponent(url)}`);
-         const transcript = JSON.stringify(response.data);
-         console.log(response.data); // The transcript
-         const ytbID = url.split("v=")[1] || url.split("/").pop();
-         const ytb_key = `transcripts/${ytbID}-${Date.now()}.txt`
-         const result = await uploadToS3(transcript,ytb_key);
-        //  toast.success(`Uploaded transcript to S3: ${ytb_key}`);
+
+        try {
+            const response = await axios.get(`/api/fetch-transcript?url=${encodeURIComponent(url)}`);
+            const transcript = JSON.stringify(response.data);
+            console.log(response.data);
+            const ytbID = url.split("v=")[1] || url.split("/").pop();
+            const ytb_key = `transcripts/${ytbID}-${Date.now()}.txt`
+            const result = await uploadToS3(transcript, ytb_key);
+            toast.success(`Uploaded transcript to S3: ${ytb_key}`);
+            // redirect(`/api/create-chat/${id}`);
         }
-        catch (error){
+        catch (error) {
             toast.error("Failed to fetch transcript");
             console.error(error);
         }
-        
+
     }
     return (
         <div className="w-full border border-slate-950 rounded-full m-2 p-1.5 flex ">

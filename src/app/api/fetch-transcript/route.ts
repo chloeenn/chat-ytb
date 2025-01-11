@@ -11,7 +11,8 @@ export async function GET(req: Request) {
 
   try {
     const transcript = await YoutubeTranscript.fetchTranscript(url);
-    const extractedText = transcript.map(item => item.text).join(" ");
+    let extractedText = transcript.map(item => item.text).join(" ");
+    extractedText = extractedText.replace(/&amp;#39;/g, "'") || extractedText.replace(/\[Music\]/gi, "");
     return new Response(JSON.stringify(extractedText), { status: 200 });
   } catch (error) {
     console.error(error);

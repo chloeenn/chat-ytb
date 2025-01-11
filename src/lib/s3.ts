@@ -15,16 +15,16 @@ export async function uploadToS3(transcript: string, ytb_key: string) {
             Body: transcript,
             ContentType: "text/plain",
         }
-    
+
         s3.putObject(
             params,
             (err: any, data: PutObjectCommandOutput | undefined) => {
-              return resolve({
-                ytb_key,
-              });
+                return resolve({
+                    ytb_key,
+                });
             }
-          );
-    
+        );
+
 
     } catch (error) {
         console.error(error);
@@ -38,4 +38,4 @@ function resolve(arg0: { ytb_key: string; }): void {
 export function getS3Url(file_key: string) {
     const url = `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_S3_AWS_REGION}.amazonaws.com/${file_key}`;
     return url;
-  }
+}
