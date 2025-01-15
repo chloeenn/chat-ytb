@@ -26,14 +26,14 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <Providers>
-        <html lang="en">
-          <div>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
-            <Toaster />
-          </div>
-        </html>
-      </Providers>
-    </ClerkProvider>
+    <Providers>
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          {children}
+          <Toaster />
+        </body>
+      </html>
+    </Providers>
+  </ClerkProvider>
   );
 }

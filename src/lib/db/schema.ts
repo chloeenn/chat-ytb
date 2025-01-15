@@ -6,10 +6,11 @@ export const chats = pgTable("chats", {
     // ytbTitle: text('ytb_title').notNull(),
     ytbUrl: text('ytb_url').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
-    userId: varchar('user_id',{length:256}), //nullable to support guest users
+    userId: varchar('user_id',{length:256}).notNull(), 
     ytbKey: text('ytb_key').notNull(),
+    // ytbTranscript: text('ytb_transcript').notNull(),
 });
-
+export type DrizzleChat = typeof chats.$inferSelect;
 export const messages = pgTable("messages", {
     id: serial('id').primaryKey(),
     chatId: integer('chat_id').references(()=>chats.id).notNull(),

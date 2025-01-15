@@ -5,6 +5,8 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { uploadToS3 } from '@/lib/s3';
 import { redirect } from 'next/navigation';
+import YtbData from '@/app/api/ytb-data/route';
+
 const UrlUpload = () => {
     const [url, setUrl] = React.useState("");
     const handleSubmit = async () => {
@@ -21,8 +23,10 @@ const UrlUpload = () => {
             const ytbID = url.split("v=")[1] || url.split("/").pop();
             const ytb_key = `transcripts/${ytbID}-${Date.now()}.txt`
             const result = await uploadToS3(transcript, ytb_key);
+            const ytbtitle = await YtbData(url);
+            toast.success(`Title: ${ytbtitle.title}`)
             toast.success(`Uploaded transcript to S3: ${ytb_key}`);
-            // redirect(`/api/create-chat/${id}`);
+            // redirect(`/create-chat/${id}`);
         }
         catch (error) {
             toast.error("Failed to fetch transcript");

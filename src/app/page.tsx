@@ -1,10 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, LogOut } from "lucide-react";
 import UrlUpload from "@/components/UrlUpload";
 
 export default async function Home() {
   const { userId } = await auth();
-
+  const isAuth = !!userId;
   return (
     <div className="w-screen min-h-screen">
       {/* Navigation Bar */}
@@ -13,7 +13,21 @@ export default async function Home() {
           ChatYTB
         </a>
         <div className="flex space-x-4">
-          {!userId ? (
+          {isAuth ? (
+            <>
+              <a href="/dashboard">
+                <button className="rounded-full px-4 py-2 bg-gray-800 text-white hover:bg-gray-700 transition duration-200">
+                  Dashboard
+                </button>
+              </a>
+              <a href='/sign-out'>
+                <button className="rounded-full px-4 py-2 bg-gray-800 text-white hover:bg-gray-700 transition duration-200">
+                  <LogOut></LogOut>
+                </button>
+
+              </a>
+            </>
+          ) : (
             <>
               <a href="/sign-in">
                 <button className="rounded-full px-4 py-2 text-gray-800 border border-gray-800 hover:bg-gray-100 transition duration-200">
@@ -26,12 +40,6 @@ export default async function Home() {
                 </button>
               </a>
             </>
-          ) : (
-            <a href="/dashboard">
-              <button className="rounded-full px-4 py-2 bg-gray-800 text-white hover:bg-gray-700 transition duration-200">
-                Dashboard
-              </button>
-            </a>
           )}
         </div>
       </nav>
