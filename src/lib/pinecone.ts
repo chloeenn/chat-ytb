@@ -1,27 +1,39 @@
 import { Pinecone } from '@pinecone-database/pinecone';
 import { downloadFromS3 } from './s3-server';
 import { RecursiveCharacterTextSplitter, } from "langchain/text_splitter";
+
+import { metadata } from '@/app/layout';
 const pc = new Pinecone({
     apiKey: `${process.env.PINECONE_API_KEY}`
 });
 
 export async function loadS3IntoPinecone(fileKey: string) {
     const transcript = await downloadFromS3(fileKey);
-    const chunks = chunking(transcript as string);
-    console.log(chunks)
-    return chunks;
-}
+    const documents = chunking(transcript as string);
 
-function chunking(data:string) {
+
+    return documents;
+}
+export const truncateStringByBytes = (str: string, bytes: number) => {
+    const enc = new TextEncoder();
+    return new TextDecoder("utf-8").decode(enc.encode(str).slice(0, bytes));
+};
+
+async function chunking(data: string) {
     const chunkSize = 256;
     const chunkOverlap = 10;
 
-    const splitter = new RecursiveCharacterTextSplitter({
-      chunkSize,
-      chunkOverlap
+    const textSplitter = new RecursiveCharacterTextSplitter({
+        chunkSize: chunkSize,
+        chunkOverlap: chunkOverlap
     });
 
-    const chunks = splitter.splitText(data);
-  
+    const splitTexts = await textSplitter.createDocuments([data]);
+    const chunks = splitTexts.map((chunk, index) => ({
+        text: chunk.pageContent, 
+        preview: truncateStringByBytes(chunk.pageContent, 100),
+        chunkIndex: index, 
+    }));
+
     return chunks;
 }
