@@ -26,7 +26,7 @@ const UrlUpload = () => {
             const ytbtitle = await YtbData(url);
             toast.success(`Title: ${ytbtitle.title}`)
             toast.success(`Uploaded transcript to S3: ${ytb_key}`);
-            // redirect(`/create-chat/${id}`);
+            redirect(`/create-chat/${id}`);
         }
         catch (error) {
             toast.error("Failed to fetch transcript");
@@ -35,7 +35,7 @@ const UrlUpload = () => {
 
     }
     return (
-        <div className="w-full border border-slate-950 rounded-full m-2 p-1.5 flex ">
+        <div className="w-full border border-slate-950 rounded-full m-2 p-1.5 flex w-1/2">
             <input
                 type="text"
                 value={url}
