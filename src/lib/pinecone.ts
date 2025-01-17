@@ -1,25 +1,44 @@
-import { Pinecone } from '@pinecone-database/pinecone';
+import { Pinecone, PineconeRecord } from '@pinecone-database/pinecone';
 import { downloadFromS3 } from './s3-server';
-import { RecursiveCharacterTextSplitter, } from "langchain/text_splitter";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import md5 from "md5";
+import { getEmbeddings } from './embeddings';
 
-import { metadata } from '@/app/layout';
 const pc = new Pinecone({
-    apiKey: `${process.env.PINECONE_API_KEY}`
+    apiKey: process.env.PINECONE_API_KEY as string
 });
 
 export async function loadS3IntoPinecone(fileKey: string) {
     const transcript = await downloadFromS3(fileKey);
-    const documents = chunking(transcript as string);
-
-
-    return documents;
+    const documents = await DocChunking(transcript as string);
+    const pcIndex = pc.index("chatytb");
+    const namespace = pcIndex.namespace(fileKey.replace(/[^\x00-\x7F]+/g, ""));
+    await namespace.upsert(documents);
+  
+    return documents[0];
+ 
+}
+async function embeddedDocument(document: string, index: number) {
+    try {
+        const embeddings = await getEmbeddings(document);
+        return {
+            id: md5(document),
+            values: embeddings,
+            metadata: {
+                text: document,
+                chunkIndex: index,
+            }
+        } as PineconeRecord;
+    } catch (error) {
+        console.error(error);
+    }
 }
 export const truncateStringByBytes = (str: string, bytes: number) => {
     const enc = new TextEncoder();
     return new TextDecoder("utf-8").decode(enc.encode(str).slice(0, bytes));
 };
 
-async function chunking(data: string) {
+async function DocChunking(data: string) {
     const chunkSize = 256;
     const chunkOverlap = 10;
 
@@ -30,10 +49,17 @@ async function chunking(data: string) {
 
     const splitTexts = await textSplitter.createDocuments([data]);
     const chunks = splitTexts.map((chunk, index) => ({
-        text: chunk.pageContent, 
-        preview: truncateStringByBytes(chunk.pageContent, 100),
-        chunkIndex: index, 
-    }));
+        text: chunk.pageContent,
+        metadata: {
+            preview: truncateStringByBytes(chunk.pageContent, 100),
+            chunkIndex: index,
+        } 
 
-    return chunks;
+    }));
+    const embeddedChunks = await Promise.all(
+        chunks.map((chunk, index) => embeddedDocument(chunk.text, index))
+    ) ;
+
+    return embeddedChunks.filter(chunk => chunk !== undefined);
 }
+
