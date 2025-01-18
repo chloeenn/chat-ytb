@@ -3,11 +3,12 @@ import {integer, pgEnum, pgTable, serial, text, timestamp, varchar} from 'drizzl
 export const userSystemEnum = pgEnum('user_system_enum',['system','user'])
 export const chats = pgTable("chats", {
     id: serial('id').primaryKey(),
-    ytbTitle: text('ytb_title'),
+    fileKey: text('ytb_key').notNull(),
+    ytbTitle: text('ytb_title').notNull(),
     fileUrl: text('ytb_url').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     userId: varchar('user_id',{length:256}).notNull(), 
-    fileKey: text('ytb_key').notNull(),
+    
 });
 export type DrizzleChat = typeof chats.$inferSelect;
 export const messages = pgTable("messages", {

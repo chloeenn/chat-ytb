@@ -12,9 +12,11 @@ export async function downloadFromS3(fileKey: string): Promise<string | undefine
       },
     });
 
+const fullFileKey = `transcripts/${fileKey}.txt`;
+
     const params = {
       Bucket: process.env.NEXT_PUBLIC_S3_BUCKET_NAME as string,
-      Key: fileKey,
+      Key: fullFileKey,
     };
 
     const obj = await s3.getObject(params).promise();
@@ -23,7 +25,7 @@ export async function downloadFromS3(fileKey: string): Promise<string | undefine
       throw new Error('File content is empty.');
     }
 
-    const fileName = path.join('/tmp', `transcript-${Date.now()}.txt`);
+    const fileName = path.join('/tmp', `transcript-${Date.now().toString()}.txt`);
     fs.writeFileSync(fileName, obj.Body.toString());
     
     return fileName;

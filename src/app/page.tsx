@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 export default async function Home() {
   const { userId } = await auth();
+  // console.log(`PAGE.tsx -- userID: ${userId}`)
   const isAuth = !!userId;
   let firstChat;
   if (userId) {
