@@ -69,7 +69,7 @@ const ChatComponent = ({ chatId }: Props) => {
       {/* Input Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-4 shadow-md border-t border-gray-200"
+        className="flex-1 bg-white p-4 shadow-md border-t border-gray-200"
       >
         <div className="relative">
           <input
