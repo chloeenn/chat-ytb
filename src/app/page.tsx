@@ -17,6 +17,7 @@ export default async function Home() {
     }
   }
   return (
+    <>
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <main className="grow flex flex-col items-center justify-center text-center ">
         <Ellipsis size={58} strokeWidth={3} />
@@ -40,7 +41,7 @@ export default async function Home() {
           </a>
         )}
       </main>
-     
     </div>
+    </>
   );
 }

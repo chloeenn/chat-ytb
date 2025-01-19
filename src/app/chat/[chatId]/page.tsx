@@ -7,6 +7,7 @@ import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import React from 'react';
+
 type Props = {
   params: { chatId: string };
 };
@@ -14,7 +15,7 @@ type Props = {
 const ChatPage = async ({ params }: Props) => {
   const chatId = params.chatId; // Extract chatId from params
   console.log(`ChatId: ${parseInt(chatId)}`);
-  
+
   const { userId } = await auth();
   if (!userId) {
     return redirect("/sign-in");
@@ -29,25 +30,26 @@ const ChatPage = async ({ params }: Props) => {
     return redirect("/");
   }
   const currChat = chatsDB.find((chat) => chat.id === parseInt(chatId));
+
   return (
-    <div className="flex h-screen overflow-scroll">
-      <div className="flex w-full h-full">
-        {/* Chat Sidebar */}
-        <div className="flex-[1] max-w-xs h-full">
-          <ChatSideBar chats={chatsDB} chatId={parseInt(chatId)} />
-        </div>
-        {/* Player */}
-        <div className="flex-[2] p-4 overflow-scroll ">
+    <div className="flex h-screen bg-gray-50">
+      {/* Chat Sidebar */}
+      <ChatSideBar chats={chatsDB} chatId={parseInt(chatId)} />
+
+      {/* Main Content (Video + Chat) */}
+      <div className="flex-1 flex flex-col p-4 space-y-4">
+        {/* Video Player */}
+        <div className="w-full aspect-w-16 aspect-h-9 bg-black rounded-xl overflow-hidden shadow-lg">
           <PlayerContainer vid_url={currChat?.ytbUrl as string} />
         </div>
+
         {/* Chat Component */}
-        <div className="flex-[3] border-l-4 border-l-slate-200 h-full">
+        <div className="flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
           <ChatComponent chatId={parseInt(chatId)} />
         </div>
       </div>
     </div>
   );
-  
 };
 
 export default ChatPage;

@@ -4,7 +4,6 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Providers from "@/components/Providers";
 import NavBar from "@/components/NavBar";
-import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +29,9 @@ export default function RootLayout({
       <Providers>
         <html lang="en">
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-            <div className="flex flex-col min-h-screen"> {/* Ensure the entire layout uses full height */}
-              <NavBar />
-              <main className="flex-grow">{children}</main> {/* Main content takes up remaining space */}
-              <Footer /> {/* Footer stays at the bottom */}
+            <div className="flex flex-col min-h-screen">
+              <NavBar/>
+              <main className="flex-1">{children}</main>
             </div>
             <Toaster />
           </body>
