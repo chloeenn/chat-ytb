@@ -4,8 +4,7 @@ import { chats, DrizzleChat } from "@/lib/db/schema";
 import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
-import { History, Menu, Plus, MessageCircle, PlusCircle, ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Plus } from "lucide-react";
 
 type Props = {
     chats: DrizzleChat[];
@@ -13,80 +12,29 @@ type Props = {
 };
 
 const ChatSideBar = ({ chats, chatId }: Props) => {
-    const [collapsed, setCollapsed] = React.useState(false);
-
-    const toggleSidebar = () => {
-        setCollapsed((prev) => !prev);
-    };
-
     return (
-        <div
-            // className={cn(
-            //     "relative bg-gray-900 text-gray-200 transition-all duration-300 h-full",
-            //     {
-            //         "w-64 p-4": !collapsed,
-            //         "w-76 p-2": collapsed,
-            //     }
-            // )}
-        >
-            {/* Toggle Button */}
-            <button
-                onClick={toggleSidebar}
-            >
-                {/* {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />} */}
-                {collapsed ? <CollapseBar /> : <ExpandBar chats={chats} chatId={chatId} />}
-            </button>
+        <div className="w-64 p-6 bg-gray-50 border-r border-gray-200 h-screen">
+            <Button className="mb-6 w-full flex items-center justify-center gap-2 font-medium text-sm text-black bg-gray-100 hover:bg-gray-200">
+                <Plus size={16} />
+                New Chat
+            </Button>
 
+            <h3 className="mb-4 text-xs font-semibold text-gray-500 tracking-wide">
+                CHAT HISTORY
+            </h3>
 
-
-
-        </div>
-    );
-};
-const CollapseBar = () => {
-    return (
-        <div>
-            <h1>Collapsed</h1>
-            <Menu />
-            <Plus />
-            <History />
-        </div>
-    )
-}
-
-const ExpandBar = ({ chats, chatId }: Props) => {
-    return (
-        <div className="w-76  relative bg-gray-900 text-gray-200 transition-all duration-300 h-full">
-            <Menu />
-            {/* New Chat Button */}
-            <Link href="/">
-                <Button className={cn("w-full border-dashed border-white border", { })}>
-                    <Plus className="mr-2 w-4 h-4" />
-                    New Chat
-                </Button>
-            </Link>
-            <div className="flex max-h-full overflow-scroll pb-20 flex-col gap-2 mt-4">
+            <div className="flex flex-col gap-2 overflow-y-auto pb-4">
                 {chats.map((chat) => (
-                    <Link key={chat.id} href={`/chat/${chat.id}`}>
-                        <div
-                            className={cn(
-                                "rounded-lg p-3 text-slate-300 flex items-center",
-                                {
-                                    "bg-blue-600 text-white": chat.id === chatId,
-                                    "hover:text-white": chat.id !== chatId,
-
-                                }
-                            )}
-                        >
-                            <MessageCircle className="mr-2" />
-                            <p className="w-full overflow-hidden text-sm truncate whitespace-nowrap text-ellipsis">
-                                {chat.ytbTitle}
-                            </p>
-                        </div>
+                    <Link key={chat.id} href={`/chat/${chat.id}`}
+                        className={`block px-3 py-2 text-sm text-gray-700 bg-white rounded-lg shadow-sm hover:bg-gray-200 ${
+                            chatId === chat.id ? "bg-gray-100 font-medium" : ""
+                        }`}>
+                        <p className="truncate">{chat.ytbTitle}</p>
                     </Link>
                 ))}
             </div>
         </div>
-    )
-}
+    );
+};
+
 export default ChatSideBar;
