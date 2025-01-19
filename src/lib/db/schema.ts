@@ -5,10 +5,10 @@ export const chats = pgTable("chats", {
     id: serial('id').primaryKey(),
     fileKey: text('ytb_key').notNull(),
     ytbTitle: text('ytb_title').notNull(),
-    fileUrl: text('ytb_url').notNull(),
+    fileUrl: text('file_url').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     userId: varchar('user_id',{length:256}).notNull(), 
-    
+    ytbUrl: text('ytb_url'),
 });
 export type DrizzleChat = typeof chats.$inferSelect;
 export const messages = pgTable("messages", {

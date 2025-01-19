@@ -31,7 +31,8 @@ const UrlUpload = () => {
             try {
                 const response = await axios.post("/api/create-chat", {
                     file_key: ytbKey,
-                    file_name: ytbTitle.title
+                    file_name: ytbTitle.title,
+                    ytb_url: url,
                 });
                 console.log("Chat created successfully:", response.data);
                 const chatId = response.data.id;
@@ -49,7 +50,7 @@ const UrlUpload = () => {
     };
 
     return (
-        <div className="w-full border border-slate-950 rounded-full m-2 p-1.5 flex w-1/3">
+        <div className="w-full border border-slate-950 rounded-full m-2 p-1.5 flex ">
             <input
                 type="text"
                 value={url}

@@ -1,14 +1,16 @@
-import { DrizzleChat } from "@/lib/db/schema";
 
 type Props = {
-  chats: DrizzleChat[];
-  chatId: number;
+  vid_url: string;
 };
 
-const PlayerContainer = ({ chats, chatId }: Props) => {
-  return(
+const PlayerContainer = async ({ vid_url }: Props) => {
+  const key = vid_url.split("v=")[1] || vid_url.split("/").pop();
+  const embedURL = `https://www.youtube.com/embed/${key}`
+  console.log("vid_url: ", vid_url)
+  return (
     <div>
-        
+      <iframe
+        src={embedURL}></iframe>
     </div>
   )
 }

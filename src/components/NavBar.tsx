@@ -4,12 +4,12 @@ type Props = {
     isAuth?: boolean;
 }
 const NavBar = async ({ isAuth }: Props) => {
-    const userId = await auth();
+    const userId = auth();
     isAuth = !!userId;
     return (
-        <nav className=" flex top-0 left-0 w-full  px-6 py-4 flex justify-between items-center shadow-lg">
+        <nav className="flex top-0 left-0 w-full  px-6 py-4 flex justify-between items-center shadow-lg">
             <div className="flex text-2xl font-bold text-gray-800 hover:text-gray-600 ">
-                <a href="/" >
+                <a href="/"  >
                     ChatYTB
                 </a>
             </div>

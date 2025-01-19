@@ -1,5 +1,5 @@
 import { PutObjectCommandOutput, S3 } from "@aws-sdk/client-s3"
-import toast from "react-hot-toast";
+
 export async function uploadToS3(transcript: string, ytb_key: string) {
     try {
         const s3 = new S3({
@@ -36,7 +36,6 @@ function resolve(arg0: { ytb_key: string; }): void {
 }
 
 export function getS3Url(file_key: string) {
-    console.log(`s3.ts url: ${file_key}`)
     const url = `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_S3_AWS_REGION}.amazonaws.com/${file_key}`;
     return url;
 }

@@ -70,3 +70,14 @@ body {
     @apply bg-background text-foreground;
   }
 }
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#__next {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}

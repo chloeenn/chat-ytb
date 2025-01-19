@@ -8,19 +8,18 @@ import { getS3Url } from "@/lib/s3";
 export async function POST(req: Request, res: Response) {
     // console.log("POST request received at /api/create-chat");
     const { userId } = await auth();
-    const { file_key, file_name } = await req.json();
+    const { file_key, file_name, ytb_url} = await req.json();
     if (!userId) {
         return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
     try {
-       
-        // console.log(`pinecone: ${file_key} ${file_name}`);
         await loadS3IntoPinecone(file_key);
         const chat_id = await db.insert(chats).values({
             fileKey: file_key,
             ytbTitle: file_name,
             fileUrl: getS3Url(file_key),
             userId: userId,
+            ytbUrl: ytb_url,
         }).returning({
             insertedId: chats.id,
         })
