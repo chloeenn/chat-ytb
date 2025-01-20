@@ -13,14 +13,14 @@ type Props = {
 
 const ChatSideBar = ({ chats, chatId }: Props) => {
   return (
-    <div className="w-64 border-r border-gray-200 flex flex-col h-screen bg-gray-50">
+    <div className="w-64 border-r border-gray-200 flex flex-col bg-gray-50">
       <div className="sticky top-0 z-10 bg-gray-50 p-6 shadow-sm">
-        <Button className="w-full flex items-center justify-center gap-2 font-medium text-sm text-black bg-gray-100 hover:bg-gray-200">
+        <Button className="w-full flex items-center justify-center gap-2 font-medium text-sm text-black shadow hover:bg-gray-200 bg-gray-100">
           <Plus size={16} />
           New Chat
         </Button>
 
-        <h3 className="mt-6 text-xs font-semibold text-gray-500 tracking-wide">
+        <h3 className="mt-7 text-xs font-semibold text-gray-500 tracking-wide">
           CHAT HISTORY
         </h3>
       </div>

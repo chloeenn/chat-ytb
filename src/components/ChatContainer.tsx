@@ -6,26 +6,21 @@ import { Send } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Message } from "ai";
+import MessageContainer from "./Message";
 
 type Props = { chatId: number };
-
+const fetchChat = async ({ chatId }: Props) => {
+  const res = await axios.post("/api/message", { chatId });
+  return res.data;
+}
 const ChatComponent = ({ chatId }: Props) => {
   const { data, isLoading } = useQuery({
-    queryKey: ["chat", chatId],
-    queryFn: async () => {
-      const response = await axios.post<Message[]>("/api/get-messages", {
-        chatId,
-      });
-      return response.data;
-    },
+    queryKey: ['chat-query', chatId],
+    queryFn: () => fetchChat({ chatId }),
   });
 
   const { input, handleInputChange, handleSubmit, messages } = useChat({
-    api: "/api/chat",
-    body: {
-      chatId,
-    },
-    initialMessages: data || [],
+
   });
 
   React.useEffect(() => {
@@ -55,8 +50,8 @@ const ChatComponent = ({ chatId }: Props) => {
             >
               <div
                 className={`max-w-sm px-4 py-2 rounded-lg shadow-sm ${message.role === "user"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-800"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-800"
                   }`}
               >
                 {message.content}
