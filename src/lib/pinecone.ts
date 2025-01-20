@@ -15,17 +15,17 @@ export async function loadS3IntoPinecone(fileKey: string) {
     const transcript = (await loader.load()) as Document[];
     const documents = await Promise.all(
         transcript.map((doc) => DocChunking(doc, fileKey))
-      );
+    );
     const vectors = await Promise.all(
         documents.flat().map((doc) => embeddedDocument(doc, fileKey))
-      );
+    );
     const pcIndex = pc.index("chatytb");
     const namespace = pcIndex.namespace(fileKey.replace(/[^\x00-\x7F]+/g, ""));
-    await namespace.upsert( vectors);
+    await namespace.upsert(vectors);
     return documents[0];
 }
 
-async function embeddedDocument(document: Document,fileKey:string) {
+async function embeddedDocument(document: Document, fileKey: string) {
     try {
         const embeddings = await getEmbeddings(document.pageContent);
         return {
@@ -38,7 +38,7 @@ async function embeddedDocument(document: Document,fileKey:string) {
         } as PineconeRecord;
     } catch (error) {
         console.log('error calling openai embeddings api', error);
-    throw error;
+        throw error;
     }
 }
 
@@ -47,7 +47,7 @@ export const truncateStringByBytes = (str: string, bytes: number) => {
     return new TextDecoder("utf-8").decode(enc.encode(str).slice(0, bytes));
 };
 
-async function DocChunking(data: Document,fileKey:string) {
+async function DocChunking(data: Document, fileKey: string) {
     const chunkSize = 1024;
     const chunkOverlap = 20;
 

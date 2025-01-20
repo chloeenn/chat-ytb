@@ -20,7 +20,8 @@ const ChatComponent = ({ chatId }: Props) => {
   });
 
   const { input, handleInputChange, handleSubmit, messages } = useChat({
-
+    api:"/api/chat",
+  
   });
 
   React.useEffect(() => {

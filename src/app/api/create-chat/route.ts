@@ -6,7 +6,6 @@ import { auth } from "@clerk/nextjs/server";
 import { getS3Url } from "@/lib/s3";
 
 export async function POST(req: Request, res: Response) {
-    // console.log("POST request received at /api/create-chat");
     const { userId } = await auth();
     const { file_key, file_name, ytb_url} = await req.json();
     if (!userId) {
