@@ -4,15 +4,9 @@ import { auth } from '@clerk/nextjs/server';
 import OpenAI from 'openai';
 import { getContext } from '@/lib/context';
 import { NextResponse } from 'next/server';
-import {
-    type Message,
-    convertToCoreMessages,
-    createDataStreamResponse,
-    experimental_generateImage,
-    streamObject,
-    streamText,
-    
-  } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import { generateId, createDataStreamResponse, streamText } from 'ai';
+
 const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
@@ -50,18 +44,37 @@ export async function POST(req: Request) {
            `,
             },
         ];
-        const response = await client.chat.completions.create({
-            messages: [{ role: 'user', content: 'Say this is a test' }],
-            model: 'gpt-4o-mini',
-        }).asResponse();
+        return createDataStreamResponse({
+            execute: dataStream => {
+              dataStream.writeData('initialized call');
         
-        // Convert the response body into a human-readable format
-        const responseText = await response.text(); // For raw text
-        console.log(responseText);
+              const result = streamText({
+                model: openai('gpt-4o'),
+                messages,
+                onChunk() {
+                  dataStream.writeMessageAnnotation({ chunk: '123' });
+                },
+                onFinish() {
+                  // message annotation:
+                  dataStream.writeMessageAnnotation({
+                    id: generateId(), // e.g. id from saved DB record
+                    other: 'information',
+                  });
         
-        // If the response is JSON, parse it
-        const jsonResponse = JSON.parse(responseText);
-        console.log(jsonResponse);
+                  // call annotation:
+                  dataStream.writeData('call completed');
+                },
+              });
+        
+              result.mergeIntoDataStream(dataStream);
+            },
+            onError: error => {
+              // Error messages are masked by default for security reasons.
+              // If you want to expose the error message to the client, you can do so here:
+              return error instanceof Error ? error.message : String(error);
+            },
+          });
+        
         
     } catch (error) {
         console.error(error);
