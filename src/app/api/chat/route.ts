@@ -1,21 +1,36 @@
 import { db } from '@/lib/db';
-import { chats, messages } from '@/lib/db/schema';
+import { getChatById, saveChat, saveMessages } from '@/lib/db/queries';
+import { auth } from '@clerk/nextjs/server';
 import OpenAI from 'openai';
-import { eq } from 'drizzle-orm';
-import { streamText, appendResponseMessages, Message } from 'ai';
-import { openai } from '@ai-sdk/openai';
 import { getContext } from '@/lib/context';
-import { FileKey } from 'lucide-react';
+import { NextResponse } from 'next/server';
+import {
+    type Message,
+    convertToCoreMessages,
+    createDataStreamResponse,
+    experimental_generateImage,
+    streamObject,
+    streamText,
+    
+  } from 'ai';
 const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(req: Request) {
+    console.log(`@api/chat`);
     try {
-        const { messages, id } = await req.json();
-        const chatDB = await db.select().from(chats).where(eq(chats.id, id));
-        const lastMessage = messages[messages.length - 1];
-        const context = await getContext(lastMessage.content, chatDB[0].fileKey);
+        const { messages, id }: { messages: Array<any>; id: string } = await req.json();
+
+        // Authenticate the user
+        const { userId } = await auth();
+        if (!userId) {
+          return new Response("Unauthorized", { status: 401 });
+        }
+        // const chat = getChatById({id});
+        // const lastMessage = messages[messages.length - 1];
+        // const context = await getContext(lastMessage.content, chat[0].fileKey);
+        const context = "";
         const prompt = [
             {
                 role: "system",
@@ -26,7 +41,7 @@ export async function POST(req: Request) {
            AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
            AI assistant is a big fan of Pinecone and Vercel.
            START CONTEXT BLOCK
-           ${context}
+          ${context}
            END OF CONTEXT BLOCK
            AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
            If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
@@ -35,36 +50,19 @@ export async function POST(req: Request) {
            `,
             },
         ];
-
-        //streaming response 
-        const stream = await client.chat.completions.create({
-            model: 'gpt-4o',
-            messages: [...prompt,
-            ...messages.filter((message: Message) => message.role === "user"),],
-            stream: true,
-        });
-        //save chat
-        const result = streamText({
-            model: openai('gpt-4o-mini'),
-            messages,
-            async onChunk() {
-                //save user chat
-                await db.insert(messages).values({
-                    chatId: id,
-                    content: lastMessage.content,
-                    role: "user",
-                })
-            },
-            async onFinish() {
-                //save ai chat
-                await db.insert(messages).values({
-                    chatId: id,
-                    content: "finish",
-                    role: "system",
-                })
-            },
-        });
-        return result;
+        const response = await client.chat.completions.create({
+            messages: [{ role: 'user', content: 'Say this is a test' }],
+            model: 'gpt-4o-mini',
+        }).asResponse();
+        
+        // Convert the response body into a human-readable format
+        const responseText = await response.text(); // For raw text
+        console.log(responseText);
+        
+        // If the response is JSON, parse it
+        const jsonResponse = JSON.parse(responseText);
+        console.log(jsonResponse);
+        
     } catch (error) {
         console.error(error);
     }

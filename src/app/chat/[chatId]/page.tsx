@@ -13,9 +13,9 @@ type Props = {
 };
 
 const ChatPage = async ({ params }: Props) => {
-  const chatId = params.chatId; // Extract chatId from params
-  console.log(`ChatId: ${parseInt(chatId)}`);
-
+  // Await params before using its properties
+  const { chatId } = await params;
+  
   const { userId } = await auth();
   if (!userId) {
     return redirect("/sign-in");
@@ -23,13 +23,15 @@ const ChatPage = async ({ params }: Props) => {
 
   const chatsDB = await db.select().from(chats).where(eq(chats.userId, userId));
   if (!chatsDB) {
+    console.error("No chats found for user:", userId);
     return redirect("/");
   }
 
-  if (!chatsDB.find((chat) => chat.id === parseInt(chatId))) {
+  const currChat = chatsDB.find((chat) => chat.id === parseInt(chatId));
+  if (!currChat) {
+    console.error("Chat not found:", chatId);
     return redirect("/");
   }
-  const currChat = chatsDB.find((chat) => chat.id === parseInt(chatId));
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -40,12 +42,12 @@ const ChatPage = async ({ params }: Props) => {
       <div className="flex-1 flex flex-col p-4 space-y-4">
         {/* Video Player */}
         <div className="w-full aspect-w-16 aspect-h-9 bg-black rounded-xl overflow-hidden shadow-lg">
-          <PlayerContainer vid_url={currChat?.ytbUrl as string} />
+          <PlayerContainer vid_url={currChat.ytbUrl ?? ""} />
         </div>
 
         {/* Chat Component */}
         <div className="flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
-          <ChatComponent chatId={parseInt(chatId)} />
+          <ChatComponent  />
         </div>
       </div>
     </div>
