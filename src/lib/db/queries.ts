@@ -1,9 +1,10 @@
 import 'server-only';
 
 
-import { eq,  } from 'drizzle-orm';
+import { eq, } from 'drizzle-orm';
 import { db } from '.';
-import { chats, Messages, messages } from './schema';
+import { chats, DrizzleChat, DrizzleMessage, messages } from './schema';
+import { Message } from 'ai';
 
 export async function getChatById(id: number) {
     try {
@@ -14,39 +15,18 @@ export async function getChatById(id: number) {
         throw error;
     }
 }
-
-export async function saveMessages({ messagesArray }: { messagesArray: Array<Messages> }) {
+export async function saveMessage(message: DrizzleMessage, chatId:number) {
     try {
-        return await db.insert(messages).values(messagesArray);
+        console.log("save message: ",message )
+        const messageData = {
+            chatId, // Ensure the message is linked to a specific chat
+            content: message.content,
+            role: message.role,
+        };
+
+        await db.insert(messages).values(messageData);
     } catch (error) {
         console.error('Failed to save messages in database', error);
-        throw error;
-    }
-}
-
-export async function saveChat({
-    userId,
-    fileKey,
-    ytbTitle,
-    fileUrl,
-    ytbUrl,
-}: {
-    userId: string;
-    fileKey: string;
-    ytbTitle: string;
-    fileUrl?: string;
-    ytbUrl?: string;
-}) {
-    try {
-        return await db.insert(chats).values({
-            fileKey,
-            ytbTitle,
-            userId,
-            fileUrl,
-            ytbUrl,
-        });
-    } catch (error) {
-        console.error('Failed to save chat in database', error);
         throw error;
     }
 }

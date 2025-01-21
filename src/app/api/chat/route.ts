@@ -1,13 +1,16 @@
 import { db } from '@/lib/db';
-import { getChatById, saveChat, saveMessages } from '@/lib/db/queries';
+// import { getChatById, saveMessage } from '@/lib/db/queries';
 import { auth } from '@clerk/nextjs/server';
 import OpenAI from 'openai';
 import { getContext } from '@/lib/context';
 import { NextResponse } from 'next/server';
 import { openai } from '@ai-sdk/openai';
-import { generateId, createDataStreamResponse, streamText, Message, convertToCoreMessages } from 'ai';
-import { chats } from '@/lib/db/schema';
+import { generateId, createDataStreamResponse, streamText, convertToCoreMessages } from 'ai';
+
 import { eq, } from 'drizzle-orm';
+import { chats, DrizzleChat, DrizzleMessage, messages as messageSchema } from '@/lib/db/schema'
+import { Message } from 'ai';
+
 const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
@@ -15,17 +18,19 @@ const client = new OpenAI({
 export async function POST(req: Request) {
     try {
         const { messages, chatId } = await req.json();
-         // Validate 
-         console.log(`@api/chat: ${chatId}`)
-         if (!chatId || typeof chatId !== 'number') {
+        // Validate 
+        console.log(`@api/chat: ${chatId}`)
+        if (!chatId || typeof chatId !== 'number') {
             return new NextResponse("Invalid chat ID", { status: 400 });
         }
         const chat = await db.select().from(chats).where(eq(chats.id, chatId));
-        console.log(chat)
-        console.log(messages)
         const lastMessage = messages[messages.length - 1];
         const context = await getContext(lastMessage.content, chat[0].fileKey);
-
+        await db.insert(messageSchema).values({
+            chatId,
+            content: lastMessage.content,
+            role: "user"
+        });
         const prompt = [
             {
                 role: "system",
@@ -45,7 +50,7 @@ export async function POST(req: Request) {
            `,
             },
         ];
-        console.log(prompt)
+        // console.log(prompt)
         return createDataStreamResponse({
             execute: dataStream => {
                 dataStream.writeData('initialized call');
@@ -56,18 +61,23 @@ export async function POST(req: Request) {
                         ...prompt,
                         ...messages.filter((message: Message) => message.role === "user"),
                     ]),
-                    onChunk() {
+                    async onChunk() {
                         dataStream.writeMessageAnnotation({ chunk: '123' });
+
                     },
-                    onFinish() {
-                        // message annotation:
+                    async onFinish() {
                         dataStream.writeMessageAnnotation({
-                            id:  generateId(), // e.g. id from saved DB record
+                            id: generateId(), // e.g. id from saved DB record
                             other: 'information',
                         });
 
                         // call annotation:
                         dataStream.writeData('call completed');
+                        await db.insert(messageSchema).values({
+                            chatId,
+                            content: lastMessage.content,
+                            role: "system"
+                        });
                     },
                 });
 
