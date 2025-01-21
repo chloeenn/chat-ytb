@@ -7,30 +7,38 @@ import axios from "axios";
 import { Message } from "ai";
 import MessageContainer from "./Message";
 
-type Props = {chatId:number};
+type Props = { chatId: number };
 
-const ChatComponent = ({chatId}: Props) => {
-
+const ChatComponent = ({ chatId }: Props) => {
+  const { data} = useQuery({
+    queryKey: ["chat", chatId],
+    queryFn: async () => {
+      const response = await axios.post('/api/fetch-message', { chatId });
+      return response.data;
+    }
+  })
+  console.log("Data from query: ",data)
   const { input, handleInputChange, handleSubmit, messages } = useChat({
     api: "/api/chat",
-    body: {chatId}
+    body: { chatId },
+    initialMessages: data || [],
   });
-React.useEffect(()=>{
-  const messageContainer = document.getElementById("message-container");
-  if(messageContainer){
-    messageContainer.scrollTo({
-      top:messageContainer.scrollHeight,
-      behavior: "smooth",
-    })
-  }
-},[messages])
+  React.useEffect(() => {
+    const messageContainer = document.getElementById("message-container");
+    if (messageContainer) {
+      messageContainer.scrollTo({
+        top: messageContainer.scrollHeight,
+        behavior: "smooth",
+      })
+    }
+  }, [messages])
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <div
         id="message-container"
         className="flex-1 overflow-y-auto p-4 space-y-4"
       >
-        <MessageContainer messages={messages} isLoading={false}/>
+        <MessageContainer messages={messages} isLoading={false} />
       </div>
 
       {/* Input Form */}
