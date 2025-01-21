@@ -7,14 +7,23 @@ import axios from "axios";
 import { Message } from "ai";
 import MessageContainer from "./Message";
 
-type Props = { };
+type Props = {chatId:number};
 
-const ChatComponent = ({ }: Props) => {
+const ChatComponent = ({chatId}: Props) => {
 
   const { input, handleInputChange, handleSubmit, messages } = useChat({
     api: "/api/chat",
+    body: {chatId}
   });
-
+React.useEffect(()=>{
+  const messageContainer = document.getElementById("message-container");
+  if(messageContainer){
+    messageContainer.scrollTo({
+      top:messageContainer.scrollHeight,
+      behavior: "smooth",
+    })
+  }
+},[messages])
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <div

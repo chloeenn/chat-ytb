@@ -1,13 +1,13 @@
 import 'server-only';
 
 
-import { eq } from 'drizzle-orm';
+import { eq,  } from 'drizzle-orm';
 import { db } from '.';
 import { chats, Messages, messages } from './schema';
 
-export async function getChatById({ id }: { id: string }) {
+export async function getChatById(id: number) {
     try {
-        const [selectedChat] = await db.select().from(chats).where(eq(chats.id, parseInt(id)));
+        const [selectedChat] = await db.select().from(chats).where(eq(chats.id, id));
         return selectedChat;
     } catch (error) {
         console.error('Failed to get chat by id from database');

@@ -5,26 +5,27 @@ import OpenAI from 'openai';
 import { getContext } from '@/lib/context';
 import { NextResponse } from 'next/server';
 import { openai } from '@ai-sdk/openai';
-import { generateId, createDataStreamResponse, streamText } from 'ai';
-
+import { generateId, createDataStreamResponse, streamText, Message, convertToCoreMessages } from 'ai';
+import { chats } from '@/lib/db/schema';
+import { eq, } from 'drizzle-orm';
 const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(req: Request) {
-    console.log(`@api/chat`);
     try {
-        const { messages, id }: { messages: Array<any>; id: string } = await req.json();
-
-        // Authenticate the user
-        const { userId } = await auth();
-        if (!userId) {
-          return new Response("Unauthorized", { status: 401 });
+        const { messages, chatId } = await req.json();
+         // Validate 
+         console.log(`@api/chat: ${chatId}`)
+         if (!chatId || typeof chatId !== 'number') {
+            return new NextResponse("Invalid chat ID", { status: 400 });
         }
-        // const chat = getChatById({id});
-        // const lastMessage = messages[messages.length - 1];
-        // const context = await getContext(lastMessage.content, chat[0].fileKey);
-        const context = "";
+        const chat = await db.select().from(chats).where(eq(chats.id, chatId));
+        console.log(chat)
+        console.log(messages)
+        const lastMessage = messages[messages.length - 1];
+        const context = await getContext(lastMessage.content, chat[0].fileKey);
+
         const prompt = [
             {
                 role: "system",
@@ -44,40 +45,48 @@ export async function POST(req: Request) {
            `,
             },
         ];
+        console.log(prompt)
         return createDataStreamResponse({
             execute: dataStream => {
-              dataStream.writeData('initialized call');
-        
-              const result = streamText({
-                model: openai('gpt-4o'),
-                messages,
-                onChunk() {
-                  dataStream.writeMessageAnnotation({ chunk: '123' });
-                },
-                onFinish() {
-                  // message annotation:
-                  dataStream.writeMessageAnnotation({
-                    id: generateId(), // e.g. id from saved DB record
-                    other: 'information',
-                  });
-        
-                  // call annotation:
-                  dataStream.writeData('call completed');
-                },
-              });
-        
-              result.mergeIntoDataStream(dataStream);
+                dataStream.writeData('initialized call');
+
+                const result = streamText({
+                    model: openai('gpt-4o'),
+                    messages: convertToCoreMessages([
+                        ...prompt,
+                        ...messages.filter((message: Message) => message.role === "user"),
+                    ]),
+                    onChunk() {
+                        dataStream.writeMessageAnnotation({ chunk: '123' });
+                    },
+                    onFinish() {
+                        // message annotation:
+                        dataStream.writeMessageAnnotation({
+                            id:  generateId(), // e.g. id from saved DB record
+                            other: 'information',
+                        });
+
+                        // call annotation:
+                        dataStream.writeData('call completed');
+                    },
+                });
+
+                result.mergeIntoDataStream(dataStream);
             },
             onError: error => {
-              // Error messages are masked by default for security reasons.
-              // If you want to expose the error message to the client, you can do so here:
-              return error instanceof Error ? error.message : String(error);
+                // Error messages are masked by default for security reasons.
+                // If you want to expose the error message to the client, you can do so here:
+                return error instanceof Error ? error.message : String(error);
             },
-          });
-        
-        
+        });
+
+
+
     } catch (error) {
-        console.error(error);
+        console.error("Error in POST /api/chat:", error);
+        return new NextResponse("Internal Server Error", { status: 500 });
     }
 
 }
+
+
