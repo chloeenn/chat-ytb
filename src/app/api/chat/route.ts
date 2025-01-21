@@ -8,18 +8,13 @@ import { openai } from '@ai-sdk/openai';
 import { generateId, createDataStreamResponse, streamText, convertToCoreMessages } from 'ai';
 
 import { eq, } from 'drizzle-orm';
-import { chats, DrizzleChat, DrizzleMessage, messages as messageSchema } from '@/lib/db/schema'
+import { chats, messages as messageSchema } from '@/lib/db/schema'
 import { Message } from 'ai';
 
-const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 export async function POST(req: Request) {
     try {
         const { messages, chatId } = await req.json();
-        // Validate 
-        console.log(`@api/chat: ${chatId}`)
         if (!chatId || typeof chatId !== 'number') {
             return new NextResponse("Invalid chat ID", { status: 400 });
         }
@@ -71,7 +66,6 @@ export async function POST(req: Request) {
                             other: 'information',
                         });
 
-                        // call annotation:
                         dataStream.writeData('call completed');
                         await db.insert(messageSchema).values({
                             chatId,
@@ -84,8 +78,6 @@ export async function POST(req: Request) {
                 result.mergeIntoDataStream(dataStream);
             },
             onError: error => {
-                // Error messages are masked by default for security reasons.
-                // If you want to expose the error message to the client, you can do so here:
                 return error instanceof Error ? error.message : String(error);
             },
         });

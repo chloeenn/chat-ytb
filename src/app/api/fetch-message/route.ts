@@ -6,9 +6,7 @@ import { NextResponse } from "next/server";
 export const runtime = "edge";
 
 export async function POST(req: Request) {
-    
     const { chatId } = await req.json();
-    // console.log(`@fetch-message: ${chatId}`)
     const messagesData = await db.select().from(messages).where(eq(messages.chatId, chatId));
     return NextResponse.json(messagesData);
 }
