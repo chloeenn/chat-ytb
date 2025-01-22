@@ -18,7 +18,7 @@ export async function uploadToS3(transcript: string, ytb_key: string) {
 
         s3.putObject(
             params,
-            (err: any, data: PutObjectCommandOutput | undefined) => {
+            (_err: any, _data: PutObjectCommandOutput | undefined) => {
                 return resolve({
                     ytb_key,
                 });
@@ -31,7 +31,7 @@ export async function uploadToS3(transcript: string, ytb_key: string) {
     }
 }
 
-function resolve(arg0: { ytb_key: string; }): void {
+function resolve(_arg0: { ytb_key: string; }): void {
     throw new Error("Function not implemented.");
 }
 

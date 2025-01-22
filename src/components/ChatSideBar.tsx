@@ -21,13 +21,13 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
       <div className="sticky top-0 z-10 bg-gray-50 p-6 shadow-sm">
       <div className="flex text-2xl m-2 font-bold text-black hover:text-gray-600 mb-5 justify-center">
         <Bot size={30} className="mr-2"/>
-        <a href="/">
+        <Link href="/">
           ChatYTB
-        </a>
+        </Link>
       </div>
         <Button className="w-full flex items-center justify-center gap-2 font-medium text-md  shadow hover:bg-gray-800 bg-black text-white">
           <Plus size={16} />
-          <a href="/">New Chat</a>
+          <Link href="/">New Chat</Link>
         </Button>
 
         <h3 className="mt-7 text-xs font-semibold text-gray-500 tracking-wide">

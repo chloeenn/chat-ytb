@@ -19,7 +19,7 @@ export const getContext = async (query: string, fileKey: string, minScore = 0.7,
     // Filter out the matches that have a score lower than the minimum score
     const qualifyingDocs = matches.filter((m) => m.score && m.score > minScore);
 
-    let docs = matches ? qualifyingDocs.map(match => (match.metadata as Metadata).text) : [];
+    const docs = matches ? qualifyingDocs.map(match => (match.metadata as Metadata).text) : [];
 
     // Join all the chunks of text together, truncate to the maximum number of tokens, and return the result
     return docs.join("\n").substring(0, maxTokens);
