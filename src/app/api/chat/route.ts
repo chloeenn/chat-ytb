@@ -1,13 +1,9 @@
 import { db } from '@/lib/db';
-// import { getChatById, saveMessage } from '@/lib/db/queries';
-import { auth } from '@clerk/nextjs/server';
-import OpenAI from 'openai';
 import { getContext } from '@/lib/context';
 import { NextResponse } from 'next/server';
 import { openai } from '@ai-sdk/openai';
-import { generateId, createDataStreamResponse, streamText, convertToCoreMessages } from 'ai';
-
-import { eq, } from 'drizzle-orm';
+import { createDataStreamResponse, streamText, convertToCoreMessages } from 'ai';
+import { eq } from 'drizzle-orm';
 import { chats, messages as messageSchema } from '@/lib/db/schema'
 import { Message } from 'ai';
 
@@ -45,7 +41,6 @@ export async function POST(req: Request) {
            `,
             },
         ];
-        // console.log(prompt)
         return createDataStreamResponse({
             execute: async dataStream => {
                 dataStream.writeData('initialized call');
@@ -63,30 +58,20 @@ export async function POST(req: Request) {
                         }
                     },
                     async onFinish() {
-                        dataStream.writeMessageAnnotation({
-                            id: generateId(), // e.g. id from saved DB record
-                            other: 'information',
-                        });
-                        console.log('full-response: ',fullResponse)
                         await db.insert(messageSchema).values({
                             chatId,
                             content: fullResponse,
                             role: "system"
                         });
                         dataStream.writeData('call completed');
-
                     },
-                });
-                
+                });  
                 result.mergeIntoDataStream(dataStream);
             },
             onError: error => {
                 return error instanceof Error ? error.message : String(error);
             },
         });
-
-
-
     } catch (error) {
         console.error("Error in POST /api/chat:", error);
         return new NextResponse("Internal Server Error", { status: 500 });

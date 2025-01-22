@@ -15,5 +15,4 @@ export async function getEmbeddings(text: string) {
     } catch (error) {
         console.error(error);
     }
-
 }

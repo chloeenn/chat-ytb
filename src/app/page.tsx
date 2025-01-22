@@ -5,10 +5,11 @@ import { db } from "@/lib/db";
 import { chats } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
-
+import {useAuth} from "@clerk/nextjs"
 export default async function Home() {
   const { userId } = await auth();
   const isAuth = !!userId;
+
   let firstChat;
   if (userId) {
     firstChat = await db.select().from(chats).where(eq(chats.userId, userId));
