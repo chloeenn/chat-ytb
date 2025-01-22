@@ -35,7 +35,6 @@ export default async function Home() {
             <div className="w-full mt-2 ">
               <UrlUpload />
             </div>
-
           ) : (
             <Link href="/sign-in">
               <Button className="m-3 text-xl">
