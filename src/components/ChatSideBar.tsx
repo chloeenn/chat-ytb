@@ -12,12 +12,23 @@ type Props = {
 };
 
 const ChatSideBar = ({ chats, chatId }: Props) => {
+  // Sort the chats by creation date (assuming `createdAt` is the field name for creation date)
+  const sortedChats = chats.sort((a, b) => {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
   return (
     <div className="w-64 border-r border-gray-200 flex flex-col bg-gray-50">
+      
       <div className="sticky top-0 z-10 bg-gray-50 p-6 shadow-sm">
+      <div className="flex text-2xl m-2 font-bold text-black hover:text-gray-600 mb-6 justify-center">
+        <a href="/">
+          ChatYTB
+        </a>
+      </div>
         <Button className="w-full flex items-center justify-center gap-2 font-medium text-sm text-black shadow hover:bg-gray-200 bg-gray-100">
           <Plus size={16} />
-          New Chat
+          <a href="/">New Chat</a>
         </Button>
 
         <h3 className="mt-7 text-xs font-semibold text-gray-500 tracking-wide">
@@ -25,7 +36,7 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
         </h3>
       </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {chats.map((chat) => (
+        {sortedChats.map((chat) => (
           <Link
             key={chat.id}
             href={`/chat/${chat.id}`}
@@ -34,6 +45,7 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
             }`}
           >
             <p className="truncate">{chat.ytbTitle}</p>
+            <p className="text-xs text-gray-500">{new Date(chat.createdAt).toLocaleDateString()}</p>
           </Link>
         ))}
       </div>

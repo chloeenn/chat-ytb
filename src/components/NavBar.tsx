@@ -2,9 +2,13 @@
 
 import { useAuth } from "@clerk/nextjs";
 import { SignOutButton } from "@clerk/nextjs";
+type Props = {
+    latestChatId: number | null; 
+};
 
-const NavBar = () => {
-    const { isSignedIn } = useAuth(); 
+const NavBar = ({ latestChatId }: Props) => {
+    const { isSignedIn } = useAuth();
+
     return (
         <nav className="flex top-0 left-0 w-full border px-6 py-4 flex justify-between items-center">
             <div className="flex text-2xl m-2 font-bold text-black hover:text-gray-600">
@@ -16,7 +20,7 @@ const NavBar = () => {
                 <li className="flex space-x-4">
                     {isSignedIn ? (
                         <>
-                            <a href="/chat/1">
+                            <a href={`/chat/${latestChatId}` as string}>
                                 <button className="rounded-full px-4 py-2 bg-black border border-black text-white hover:bg-gray-700 transition duration-200">
                                     History
                                 </button>

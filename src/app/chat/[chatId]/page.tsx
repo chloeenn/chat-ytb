@@ -13,9 +13,8 @@ type Props = {
 };
 
 const ChatPage = async ({ params }: Props) => {
-  // Await params before using its properties
   const { chatId } = await params;
-  
+
   const { userId } = await auth();
   if (!userId) {
     return redirect("/sign-in");
@@ -47,7 +46,7 @@ const ChatPage = async ({ params }: Props) => {
 
         {/* Chat Component */}
         <div className="flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
-          <ChatComponent  chatId={parseInt(chatId)}/>
+          <ChatComponent chatId={parseInt(chatId)} />
         </div>
       </div>
     </div>
