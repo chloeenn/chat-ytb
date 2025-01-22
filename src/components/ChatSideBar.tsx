@@ -4,7 +4,7 @@ import { DrizzleChat } from "@/lib/db/schema";
 import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Bot } from "lucide-react";
 
 type Props = {
   chats: DrizzleChat[];
@@ -12,21 +12,20 @@ type Props = {
 };
 
 const ChatSideBar = ({ chats, chatId }: Props) => {
-  // Sort the chats by creation date (assuming `createdAt` is the field name for creation date)
   const sortedChats = chats.sort((a, b) => {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 
   return (
-    <div className="w-64 border-r border-gray-200 flex flex-col bg-gray-50">
-      
+    <div className="w-64 border-r border-gray-200 flex flex-col ">
       <div className="sticky top-0 z-10 bg-gray-50 p-6 shadow-sm">
-      <div className="flex text-2xl m-2 font-bold text-black hover:text-gray-600 mb-6 justify-center">
+      <div className="flex text-2xl m-2 font-bold text-black hover:text-gray-600 mb-5 justify-center">
+        <Bot size={30} className="mr-2"/>
         <a href="/">
           ChatYTB
         </a>
       </div>
-        <Button className="w-full flex items-center justify-center gap-2 font-medium text-sm text-black shadow hover:bg-gray-200 bg-gray-100">
+        <Button className="w-full flex items-center justify-center gap-2 font-medium text-md  shadow hover:bg-gray-800 bg-black text-white">
           <Plus size={16} />
           <a href="/">New Chat</a>
         </Button>
@@ -45,7 +44,6 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
             }`}
           >
             <p className="truncate">{chat.ytbTitle}</p>
-            <p className="text-xs text-gray-500">{new Date(chat.createdAt).toLocaleDateString()}</p>
           </Link>
         ))}
       </div>

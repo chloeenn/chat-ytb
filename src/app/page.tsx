@@ -18,19 +18,20 @@ export default async function Home() {
   }
 
   return (
-    <>
+    <div className="w-screen min-h-screen ">
+      <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]"><div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#C9EBFF,transparent)]"></div></div>
       <NavBar latestChatId={latestChatId} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ">
         <main className="grow flex flex-col items-center justify-center text-center ">
           <Ellipsis size={58} strokeWidth={3} />
           <div className="flex items-center mb-1">
-            <h1 className="text-transparent bg-clip-text font-extrabold bg-gradient-to-r from-black via-pink-700 via-purple-500 to-indigo-700 font-bold text-6xl">Chat with YouTube</h1>
+            <h1 className="font-bold text-6xl ">Chat with YouTube</h1>
           </div>
-          <p className="max-w-xl mt-1 text-xl text-slate-600">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          <p className="max-w-lg mt-1 text-lg text-slate-600">
+            Ready to assist you with anything you need, from answering questions to summarizing long videos. 
           </p>
           {isAuth ? (
-            <div className="w-full mt-2">
+            <div className="w-full mt-2 ">
               <UrlUpload />
             </div>
 
@@ -44,6 +45,8 @@ export default async function Home() {
           )}
         </main>
       </div>
-    </>
+    </div>
   );
 }
+
+{/* <div class="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]"><div class="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#C9EBFF,transparent)]"></div></div> */}

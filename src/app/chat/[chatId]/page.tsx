@@ -14,7 +14,7 @@ type Props = {
 
 const ChatPage = async ({ params }: Props) => {
   const { chatId } = await params;
-
+  
   const { userId } = await auth();
   if (!userId) {
     return redirect("/sign-in");
@@ -33,19 +33,18 @@ const ChatPage = async ({ params }: Props) => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Chat Sidebar */}
-      <ChatSideBar chats={chatsDB} chatId={parseInt(chatId)} />
+    <div className="flex h-screen">
+     <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+      <div className="w-64 shadow-md max-h-screen bg-gray-50 ">
+        <ChatSideBar chats={chatsDB} chatId={parseInt(chatId)} />
+      </div>
 
-      {/* Main Content (Video + Chat) */}
-      <div className="flex-1 flex flex-col p-4 space-y-4">
-        {/* Video Player */}
-        <div className="w-full aspect-w-16 aspect-h-9 bg-black rounded-xl overflow-hidden shadow-lg">
+      <div className="flex-1 flex flex-col space-y-6 overflow-hidden p-3">
+        <div className="w-full bg-black rounded-xl shadow-lg overflow-hidden aspect-w-16 aspect-h-9">
           <PlayerContainer vid_url={currChat.ytbUrl ?? ""} />
         </div>
 
-        {/* Chat Component */}
-        <div className="flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="flex-1 bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
           <ChatComponent chatId={parseInt(chatId)} />
         </div>
       </div>

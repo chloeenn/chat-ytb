@@ -50,13 +50,13 @@ const UrlUpload = () => {
     };
 
     return (
-        <div className="w-full border border-slate-950 rounded-full m-2 p-1.5 flex">
+        <div className="w-full border border-slate-950 rounded-full m-2 p-1.5 flex ">
             <input
                 type="text"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="Paste YouTube URL..."
-                className="w-11/12 outline-none text-center items-inline truncate ml-4 mr-4"
+                className="w-11/12 outline-none text-center items-inline truncate ml-4 mr-4 bg-transparent border-none"
                 disabled={isLoading} 
             />
             <button

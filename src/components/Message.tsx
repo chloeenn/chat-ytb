@@ -5,10 +5,10 @@ type Props = {
   messages: Message[];
   isLoading: boolean;
 };
-
 const MessageContainer = ({ messages, isLoading }: Props) => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
+      
       {messages.map((message) => {
         return (
           <div
@@ -16,8 +16,8 @@ const MessageContainer = ({ messages, isLoading }: Props) => {
             className={`flex mb-4 ${message.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-xs px-4 py-2 rounded-lg shadow-md text-black ${
-                message.role === "user" ? "bg-blue-100" : "bg-gray-200"
+              className={`max-w-lg px-4 py-2 rounded-2xl shadow-md ${
+                message.role === "user" ? "bg-black text-white" : "bg-gray-200 text-black "
               }`}
             >
               {message.content}

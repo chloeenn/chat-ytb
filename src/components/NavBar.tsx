@@ -2,8 +2,9 @@
 
 import { useAuth } from "@clerk/nextjs";
 import { SignOutButton } from "@clerk/nextjs";
+import { Bot } from "lucide-react";
 type Props = {
-    latestChatId: number | null; 
+    latestChatId: number | null;
 };
 
 const NavBar = ({ latestChatId }: Props) => {
@@ -12,6 +13,7 @@ const NavBar = ({ latestChatId }: Props) => {
     return (
         <nav className="flex top-0 left-0 w-full border px-6 py-4 flex justify-between items-center">
             <div className="flex text-2xl m-2 font-bold text-black hover:text-gray-600">
+                <Bot size={30} className="mr-2" />
                 <a href="/">
                     ChatYTB
                 </a>
