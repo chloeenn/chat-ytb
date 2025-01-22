@@ -6,6 +6,7 @@ import NavBar from "@/components/NavBar";
 import { db } from "@/lib/db";
 import { chats } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import Link from "next/link";
 
 export default async function Home() {
   const { userId } = await auth();
@@ -36,12 +37,12 @@ export default async function Home() {
             </div>
 
           ) : (
-            <a href="/sign-in">
+            <Link href="/sign-in">
               <Button className="m-3 text-xl">
                 Login to get Started!
                 <LogIn className="w-6 h-6 ml-3" />
               </Button>
-            </a>
+            </Link>
           )}
         </main>
       </div>

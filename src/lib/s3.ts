@@ -1,4 +1,4 @@
-import { PutObjectCommandOutput, S3 } from "@aws-sdk/client-s3"
+import { PutObjectCommand, S3 } from "@aws-sdk/client-s3"
 
 export async function uploadToS3(transcript: string, ytb_key: string) {
     try {
@@ -16,23 +16,13 @@ export async function uploadToS3(transcript: string, ytb_key: string) {
             ContentType: "text/plain",
         }
 
-        s3.putObject(
-            params,
-            (_err: any, _data: PutObjectCommandOutput | undefined) => {
-                return resolve({
-                    ytb_key,
-                });
-            }
-        );
+        await s3.send(new PutObjectCommand(params));
 
+        return { ytb_key };
 
     } catch (error) {
         console.error(error);
     }
-}
-
-function resolve(_arg0: { ytb_key: string; }): void {
-    throw new Error("Function not implemented.");
 }
 
 export function getS3Url(file_key: string) {

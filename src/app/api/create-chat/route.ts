@@ -5,7 +5,7 @@ import { chats } from "@/lib/db/schema"
 import { auth } from "@clerk/nextjs/server";
 import { getS3Url } from "@/lib/s3";
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
     const { userId } = await auth();
     const { file_key, file_name, ytb_url} = await req.json();
     if (!userId) {
