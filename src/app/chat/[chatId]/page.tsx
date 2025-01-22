@@ -9,12 +9,12 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 
 type Props = {
-  params: { chatId: string };
+  params: Promise<{ chatId: string }>;
 };
 
 const ChatPage = async ({ params }: Props) => {
-  const { chatId } = params;
-  
+  const chatId = (await params).chatId;
+
   const { userId } = await auth();
   if (!userId) {
     return redirect("/sign-in");
@@ -34,7 +34,7 @@ const ChatPage = async ({ params }: Props) => {
 
   return (
     <div className="flex h-screen">
-     <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+      <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
       <div className="w-64 shadow-md max-h-screen bg-gray-50 ">
         <ChatSideBar chats={chatsDB} chatId={parseInt(chatId)} />
       </div>
