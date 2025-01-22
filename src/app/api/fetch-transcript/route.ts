@@ -1,10 +1,8 @@
-// /app/api/fetch-transcript/route.ts
 import { YoutubeTranscript } from 'youtube-transcript';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const url = searchParams.get("url");
-  console.log("Received URL:", url);  
+  const url = searchParams.get("url");  
   if (!url) {
     return new Response(JSON.stringify({ error: "URL is required" }), { status: 400 });
   }
