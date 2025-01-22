@@ -5,8 +5,10 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { uploadToS3 } from "@/lib/s3";
 import { useRouter } from "next/navigation";
-import YtbData from "@/app/api/ytb-data/route";
 
+interface YtbDataResponse {
+    title: string;
+}
 const UrlUpload = () => {
     const [url, setUrl] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false); 
@@ -26,9 +28,9 @@ const UrlUpload = () => {
             const ytbID = url.split("v=")[1] || url.split("/").pop();
             const ytbKey = `${ytbID}-${Date.now()}`;
 
-            await uploadToS3(transcript, `transcripts/${ytbKey}.txt`);
+            await uploadToS3(transcript, `transcripts/${encodeURIComponent(ytbKey)}.txt`);
 
-            const ytbTitle = await YtbData(url);
+            const { data: ytbTitle } = await axios.get<YtbDataResponse>(`api/ytb-data?url=${url}`);
 
             try {
                 const response = await axios.post("/api/create-chat", {
