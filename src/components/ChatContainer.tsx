@@ -17,7 +17,6 @@ const ChatComponent = ({ chatId }: Props) => {
       return response.data;
     }
   })
-  console.log("Data from query: ",data)
   const { input, handleInputChange, handleSubmit, messages } = useChat({
     api: "/api/chat",
     body: { chatId },

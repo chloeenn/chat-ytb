@@ -47,34 +47,37 @@ export async function POST(req: Request) {
         ];
         // console.log(prompt)
         return createDataStreamResponse({
-            execute: dataStream => {
+            execute: async dataStream => {
                 dataStream.writeData('initialized call');
-
+                let fullResponse = "";
                 const result = streamText({
                     model: openai('gpt-4o'),
                     messages: convertToCoreMessages([
                         ...prompt,
                         ...messages.filter((message: Message) => message.role === "user"),
                     ]),
-                    async onChunk() {
-                        dataStream.writeMessageAnnotation({ chunk: '123' });
-
+                    async onChunk({ chunk }) {
+                        if(chunk.type==='text-delta'){
+                            fullResponse += chunk.textDelta;
+                            dataStream.writeData(chunk.textDelta);
+                        }
                     },
                     async onFinish() {
                         dataStream.writeMessageAnnotation({
                             id: generateId(), // e.g. id from saved DB record
                             other: 'information',
                         });
-
-                        dataStream.writeData('call completed');
+                        console.log('full-response: ',fullResponse)
                         await db.insert(messageSchema).values({
                             chatId,
-                            content: lastMessage.content,
+                            content: fullResponse,
                             role: "system"
                         });
+                        dataStream.writeData('call completed');
+
                     },
                 });
-
+                
                 result.mergeIntoDataStream(dataStream);
             },
             onError: error => {
