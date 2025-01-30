@@ -1,10 +1,9 @@
 
 # ChatYTB
 
+Chat-YTB is an AI-powered chatbot that allows you to ask questions about YouTube videos :)
 
 https://github.com/user-attachments/assets/d953edb1-322e-40c9-8937-ced2389aeb85
-
-ChatYTB is a full-stack web application that allows users to input YouTube URLs and ask questions about the video content. It supports authenticated users and provides a personalized chat history. The application leverages technologies such as PostgreSQL, Express, React, Node.js, TypeScript, Amazon S3, Pinecone, and Clerk for authentication.
 
 ## Installation
 
@@ -45,20 +44,14 @@ ChatYTB is a full-stack web application that allows users to input YouTube URLs 
 
 5. Access the app at `http://localhost:3000`.
 
-## Usage
+## How It Works
 
-1. Sign in.
-2. Input a YouTube URL to retrieve its transcript.
-3. Ask questions about the video content.
-4. For registered users, view your chat history.
-
-## Acknowledgements
-
-- [Clerk](https://clerk.dev) for authentication.
-- [Pinecone](https://www.pinecone.io) for vector database services.
-- [YouTube Data API](https://developers.google.com/youtube/v3) for transcript retrieval.
-- [Amazon S3](https://aws.amazon.com/s3/) for storage solutions.
+Video Processing:
+The app uses the YouTube API to fetch video metadata and transcripts. The transcript is processed and converted into vector embeddings using OpenAI's embeddings API. The embeddings are stored in Pinecone, a vector database, for efficient similarity search. 
 
 
-
+Query Handling:
+When a user asks a question, the query is also converted into an embedding.
+Pinecone retrieves the most relevant parts of the video transcript based on the query.
+OpenAI's language model generates a natural language response using the retrieved context.
 
