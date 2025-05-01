@@ -9,22 +9,48 @@ const pc = new Pinecone({
     apiKey: process.env.PINECONE_API_KEY as string
 });
 
-export async function loadS3IntoPinecone(fileKey: string) {
-    const transcriptFile = await downloadFromS3(fileKey);
-    const loader = new TextLoader(transcriptFile as string);
-    const transcript = (await loader.load()) as Document[];
-    const documents = await Promise.all(
-        transcript.map((doc) => DocChunking(doc, fileKey))
-    );
+// export async function loadS3IntoPinecone(fileKey: string) {
+//     const transcriptFile = await downloadFromS3(fileKey);
+//     const loader = new TextLoader(transcriptFile as string);
+//     const transcript = (await loader.load()) as Document[];
+//     const documents = await Promise.all(
+//         transcript.map((doc) => DocChunking(doc, fileKey))
+//     );
+//     const vectors = await Promise.all(
+//         documents.flat().map((doc) => embeddedDocument(doc, fileKey))
+//     );
+//     const pcIndex = pc.index("chatytb");
+//     const namespace = pcIndex.namespace(fileKey.replace(/[^\x00-\x7F]+/g, ""));
+//     await namespace.upsert(vectors);
+//     return documents[0];
+// }
+
+// export async function loadTranscriptIntoPinecone(transcriptText: string, fileKey: string) {
+//   const document = new Document({
+//     pageContent: transcriptText,
+//     metadata: { source: fileKey },
+//   });
+
+//   await getEmbeddings(document.pageContent); 
+// }
+
+export async function loadTranscriptIntoPineconeFromText(transcriptText: string, fileKey: string) {
+    const document = new Document({
+        pageContent: transcriptText,
+        metadata: { source: fileKey },
+    });
+
+    const chunkedDocs = await DocChunking(document, fileKey);
     const vectors = await Promise.all(
-        documents.flat().map((doc) => embeddedDocument(doc, fileKey))
+        chunkedDocs.map((doc) => embeddedDocument(doc, fileKey))
     );
+
     const pcIndex = pc.index("chatytb");
     const namespace = pcIndex.namespace(fileKey.replace(/[^\x00-\x7F]+/g, ""));
     await namespace.upsert(vectors);
-    return documents[0];
-}
 
+    return chunkedDocs;
+}
 async function embeddedDocument(document: Document, fileKey: string) {
     try {
         const embeddings = await getEmbeddings(document.pageContent);

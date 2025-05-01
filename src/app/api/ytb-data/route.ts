@@ -9,7 +9,6 @@ export async function GET(req: NextRequest) {
         if (!url) {
             return NextResponse.json({ error: "URL parameter is required" }, { status: 400 });
         }
-
         const requestURL = `https://www.youtube.com/oembed?url=${url}&format=json`;
         const result = await axios.get(requestURL);
 
