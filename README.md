@@ -4,7 +4,16 @@
 
 https://github.com/user-attachments/assets/d953edb1-322e-40c9-8937-ced2389aeb85
 
-ChatYTB is a full-stack web application that allows users to input YouTube URLs and ask questions about the video content. It supports authenticated users and provides a personalized chat history. The application leverages technologies such as PostgreSQL, Express, React, Node.js, TypeScript, Amazon S3, Pinecone, and Clerk for authentication.
+**ChatYTB** is a full-stack AI-powered web application that lets users paste YouTube URLs and ask questions about video content. It supports user authentication, YouTube transcript processing, and personalized chat history.
+
+### Tech Stack
+
+- **Frontend**: React (Next.js), TypeScript, Clerk
+- **Backend**: Node.js, Express, FastAPI (Python)
+- **AI/Vector Search**: OpenAI API, Pinecone
+- **Database**: PostgreSQL with Drizzle ORM + Drizzle Kit Studio
+- **Storage**: Amazon S3 (for storing transcripts)
+- **Infrastructure**: Docker & Docker Compose
 
 ## Installation
 
@@ -14,10 +23,29 @@ ChatYTB is a full-stack web application that allows users to input YouTube URLs 
    cd chat-ytb
    ```
 
-2. Install dependencies:
+2. Run the App:
+
+   ### Option 1: Run Frontend & Backend Separately 
+
    ```bash
    npm install
+   npm run dev
+   # App runs on http://localhost:3000
    ```
+
+   ```bash
+   cd src/transcript-backend
+   pip install -r requirements.txt
+   uvicorn main:app --host 0.0.0.0 --port 8000
+   # Transcript API runs on http://localhost:8000
+   ```
+
+   ### Option 2: Run with Docker 
+
+   ```bash
+   docker-compose up --build
+   ```
+
 
 3. Set up environment variables:
    Create a `.env` file in the root directory and include the following variables:
@@ -44,21 +72,3 @@ ChatYTB is a full-stack web application that allows users to input YouTube URLs 
    ```
 
 5. Access the app at `http://localhost:3000`.
-
-## Usage
-
-1. Sign in.
-2. Input a YouTube URL to retrieve its transcript.
-3. Ask questions about the video content.
-4. For registered users, view your chat history.
-
-## Acknowledgements
-
-- [Clerk](https://clerk.dev) for authentication.
-- [Pinecone](https://www.pinecone.io) for vector database services.
-- [YouTube Data API](https://developers.google.com/youtube/v3) for transcript retrieval.
-- [Amazon S3](https://aws.amazon.com/s3/) for storage solutions.
-
-
-
-

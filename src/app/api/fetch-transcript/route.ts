@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const res = await fetch(`http://localhost:8000/transcript?url=${encodeURIComponent(url)}`);
+    const res = await fetch(`http://backend:8000/transcript?url=${encodeURIComponent(url)}`);
     const data = await res.json();
     // console.log(data);
     if (data.error) {
