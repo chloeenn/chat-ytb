@@ -66,9 +66,4 @@ https://github.com/user-attachments/assets/d953edb1-322e-40c9-8937-ced2389aeb85
    OPENAI_API_KEY=your-openai-key
    ```
 
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
-
-5. Access the app at `http://localhost:3000`.
+4. Access the app at `http://localhost:3000`.
